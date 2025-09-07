@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    <title>HOME - Default</title>
+    {% endblock title %}
+    {% block base_css %}
+    <link rel="stylesheet" href="{% static "css/homestyle.css" %}">
+    {% endblock base_css %}
+
+    {% block head %}
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+    {% endblock head %}
+
+    {% block main_css %}
+    <link rel="stylesheet" href="#">
+    {% endblock main_css %}
+
+</head>
+
+{% block bg_color %}
+<body class="bg-gradient-to-b from-black via-[#0a0f3c] to-[#0f172a] min-h-screen ">
+
+{% endblock bg_color %}
+
+
+  {% block nav %}
+<nav id="joystash-nav" class="sticky top-0 z-50 bg-gray-900/70 backdrop-blur-lg border-b border-gray-700/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <div class="flex-shrink-0">
+        <a href="/" class="text-2xl font-bold text-white">Joystash</a>
+      </div>
+{% block nav_links %}
+ <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+          <a href="#hero" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Features</a>
+          <a href="#sub-hero" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+          
+
+        </div>
+      </div>
+{% endblock nav_links %}
+     
+
+      <div class="-mr-2 flex md:hidden">
+        <button id="mobile-menu-button" type="button" class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+{% block nav_links_mobile %}
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+      <a href="#hero" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Features</a>
+      <a href="#sub-hero" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm block">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+    </div>
+  </div>
+{% endblock nav_links_mobile %}
+
+
+</nav>
+
+<main class="pt-16">
+  </main>
+
+
+<script>
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    // Optional: toggle the hamburger/X icons
+    mobileMenuButton.querySelectorAll('svg').forEach(icon => {
+      icon.classList.toggle('hidden');
+    });
+  });
+</script>
+  {% endblock nav %}
+    
+{% comment %} Hero section {% endcomment %}
+
+  {% block hero %}
+
+<div class="main-heading">
+    <h1>Organize Your Code.<p class='animated-gradient'>Supercharge</p> Your Productivity.</h1>
+    <h3 class="sub-heading">Store, search, and manage your snippets in one place. Access <br> your code from anywhere with Joystash's intelligent organization <br> system.</h3>
+    <div class="main_btn">
+        <a href="{% url 'snippet_list' %}" class="start">Get Started →</a>
+        <a href="#" class="start">Watch Demo</a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section id="hero">
+  <div class="hero-content">
+    <h1>
+      Everything you need to 
+      <span class="gradient-text">manage code</span>
+    </h1>
+    <p class="subtitle">
+      Powerful features designed for developers who value organization and efficiency.
+    </p>
+  </div>
+
+  <div class="features" id='features'>
+    <div class="feature-card">
+      <div class="icon">🔍</div>
+      <h3>Quick Search</h3>
+      <p>Find any snippet instantly with powerful search and tagging capabilities.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">📄</div>
+      <h3>Save Code Snippets</h3>
+      <p>Store and organize your code snippets with syntax highlighting and notes.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🔒</div>
+      <h3>Secure Login with Google</h3>
+      <p>Access your snippets securely with Google authentication and cloud sync.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">📁</div>
+      <h3>Organized Dashboard</h3>
+      <p>Keep everything organized with projects, tags, and smart categorization.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Sub Hero Section -->
+<section id="sub-hero">
+  <div class="sub-hero-content">
+    <h2>
+      How Joystash <span class="gradient-text">simplifies</span> your workflow
+    </h2>
+    <p class="subtitle">
+      Three simple steps to organize your code and boost productivity.
+    </p>
+  </div>
+
+  <div class="steps">
+    <!-- Step 1 -->
+    <div class="step">
+      <div class="step-icon">
+        <span class="step-number">01</span>
+        <div class="icon">→</div>
+      </div>
+      <h3>Login with Google</h3>
+      <p>Quick and secure authentication to get started in seconds.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="step-icon">
+        <span class="step-number">02</span>
+        <div class="icon">+</div>
+      </div>
+      <h3>Add and manage snippets</h3>
+      <p>Save your code snippets with tags, notes, and syntax highlighting.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <div class="step-icon">
+        <span class="step-number">03</span>
+        <div class="icon">🌐</div>
+      </div>
+      <h3>Access anytime, anywhere</h3>
+      <p>Your snippets sync across all devices with cloud storage.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- Call To Action Section -->
+<section id="cta">
+  <div class="cta-content">
+    <h2>
+      Ready to <span class="gradient-text">stash</span> your code?
+    </h2>
+    <p class="subtitle">
+      Join thousands of developers who trust Joystash to organize their code snippets and boost productivity (I wish I had the chance to say that.).
+    </p>
+
+    <a href="{% url "dashboard" %}" class="cta-button">
+      Go to Dashboard <span class="arrow">→</span>
+    </a>
+
+    <p class="note">Free to get started • No credit card required</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-top">
+    <p>© 2025 Joystash. All rights reserved.</p>
+    <nav class="footer-links">
+      <a href="#hero">About</a>
+      <a href="#">Docs</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      <span class="dot blue"></span>
+      Built for developers, by developer
+      <span class="dot purple"></span>
+    </p>
+  </div>
+</footer>
+
+{% endblock hero %}
+
+ 
+
+</body>
+</html>

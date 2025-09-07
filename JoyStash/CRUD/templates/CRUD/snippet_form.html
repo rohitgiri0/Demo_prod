@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<title>{% if snippet %}Update Snippet{% else %}Create Snippet{% endif %}</title>
+{% endblock title %}
+
+{% block head %}
+  <script src="https://cdn.tailwindcss.com"></script>
+{% endblock head %}
+
+{% block hero %}
+<div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-black to-[#0f172a]">
+  <div class="w-full max-w-4xl mx-auto bg-[#181c24] rounded-2xl shadow-2xl p-8 border border-[#232a3a]">
+    <h1 class="text-3xl font-extrabold text-white mb-8 text-center tracking-tight">{% if snippet %}Update Snippet{% else %}Create New Snippet{% endif %}</h1>
+    <form id="snippetForm" method="POST" action="{% if snippet %}{% url 'snippet_update' snippet.id %}{% else %}{% url 'snippet_create' %}{% endif %}" class="space-y-7">
+      {% csrf_token %}
+      <!-- Title -->
+      <div>
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Title</label>
+        <input type="text" name="title" required maxlength="100"
+          class="w-full p-3 rounded-lg bg-[#222736] text-white border border-[#30384c] focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          placeholder="Enter snippet title" value="{% if snippet %}{{ snippet.title }}{% endif %}">
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Type</label>
+        <select id="snippet_type" name="snippet_type"
+          class="w-full p-3 rounded-lg bg-[#222736] text-white border border-[#30384c] focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+          <option value="note" {% if snippet and snippet.snippet_type == "note" %}selected{% endif %}>Note</option>
+          <option value="code" {% if snippet and snippet.snippet_type == "code" or not snippet %}selected{% endif %}>Code</option>
+        </select>
+      </div>
+
+      <!-- Description/Content -->
+      <div id="note-container">
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Content</label>
+        <textarea name="content" id="description" rows="6"
+          class="w-full p-3 rounded-lg bg-[#222736] text-white border border-[#30384c] focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          placeholder="Write your note or code description here...">{% if snippet and snippet.snippet_type == "note" %}{{ snippet.content }}{% endif %}</textarea>
+      </div>
+
+      <!-- Monaco Editor for Code Snippet -->
+      <div id="code-editor-section" class="hidden">
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Code Editor</label>
+        <div class="flex flex-col gap-3">
+          <div id="editor" class="h-64 w-full rounded-lg border border-[#30384c] shadow-inner"></div>
+        </div>
+      </div>
+
+      <!-- Language Selector -->
+      <div id="language-selector" class="hidden">
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Language</label>
+        <select id="language" name="language"
+          class="w-full p-3 rounded-lg bg-[#222736] text-white border border-[#30384c] focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+          <option value="python" {% if snippet and snippet.language == "python" %}selected{% endif %}>Python</option>
+          <option value="javascript" {% if snippet and snippet.language == "javascript" %}selected{% endif %}>JavaScript</option>
+          <option value="cpp" {% if snippet and snippet.language == "cpp" %}selected{% endif %}>C++</option>
+          <option value="java" {% if snippet and snippet.language == "java" %}selected{% endif %}>Java</option>
+          <option value="html" {% if snippet and snippet.language == "html" %}selected{% endif %}>HTML</option>
+          <option value="ruby" {% if snippet and snippet.language == "ruby" %}selected{% endif %}>Ruby</option>
+          <option value="go" {% if snippet and snippet.language == "go" %}selected{% endif %}>Go</option>
+          <option value="php" {% if snippet and snippet.language == "php" %}selected{% endif %}>PHP</option>
+          <option value="typescript" {% if snippet and snippet.language == "typescript" %}selected{% endif %}>TypeScript</option>
+          <option value="csharp" {% if snippet and snippet.language == "csharp" %}selected{% endif %}>C#</option>
+        </select>
+      </div>
+
+      <!-- Tags -->
+      <div>
+        <label class="block text-gray-400 mb-2 text-sm font-medium">Tags</label>
+        <input type="text" name="tags"
+          class="w-full p-3 rounded-lg bg-[#222736] text-white border border-[#30384c] focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+          placeholder="e.g. python, django, notes" value="{% if snippet %}{{ snippet.tags }}{% endif %}">
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex flex-col sm:flex-row justify-end gap-4 pt-4">
+        <button type="button" onclick="window.location.href='{% url 'home' %}'"
+          class="px-6 py-2 rounded-lg bg-[#232a3a] text-white hover:bg-[#2e364a] transition shadow font-medium">Cancel</button>
+        <button type="submit"
+          class="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-700 to-purple-700 text-white font-semibold hover:from-blue-600 hover:to-purple-600 transition shadow-lg">{% if snippet %}Update Snippet{% else %}Add Snippet{% endif %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script> {% endcomment %}
+
+
+<script src="{% static 'monaco/vs/loader.js' %}"></script>
+
+
+<script>
+  // Cache DOM elements
+  const snippetType = document.getElementById("snippet_type");
+  const noteContainer = document.getElementById("note-container");
+  const codeEditorSection = document.getElementById("code-editor-section");
+  const languageSelector = document.getElementById("language-selector");
+  const descriptionTextarea = document.getElementById("description");
+  let editor = null;
+  let monacoLoaded = false;
+
+  // Monaco loader
+  {% comment %} require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }}); {% endcomment %}
+  require.config({ paths: { 'vs': '{% static "monaco/vs" %}' }});
+  require(["vs/editor/editor.main"], function () {
+    editor = monaco.editor.create(document.getElementById("editor"), {
+      value: "",
+      language: "python",
+      theme: "vs-dark",
+      automaticLayout: true,
+      fontSize: 16,
+      minimap: { enabled: false },
+    });
+    monacoLoaded = true;
+    {% if snippet and snippet.snippet_type == "code" %}
+      editor.setValue(`{{ snippet.content|escapejs }}`);
+      monaco.editor.setModelLanguage(editor.getModel(), "{{ snippet.language|default:'python' }}");
+    {% else %}
+      editor.setValue("");
+      editor.updateOptions({ fontFamily: 'JetBrains Mono, Fira Mono, Menlo, monospace' });
+    {% endif %}
+  });
+
+  // Show/hide note/code fields on page load based on snippet_type
+  function toggleFields() {
+    if (snippetType.value === "code") {
+      noteContainer.classList.add("hidden");
+      codeEditorSection.classList.remove("hidden");
+      languageSelector.classList.remove("hidden");
+      setTimeout(() => { if(editor) editor.layout(); }, 200); // Fix Monaco resize
+    } else {
+      noteContainer.classList.remove("hidden");
+      codeEditorSection.classList.add("hidden");
+      languageSelector.classList.add("hidden");
+    }
+  }
+  toggleFields();
+
+  // Show/hide note/code fields on change
+  snippetType.addEventListener("change", () => {
+    toggleFields();
+  });
+
+  // Set Monaco language on language select
+  document.getElementById("language").addEventListener("change", (e) => {
+    if (editor && monacoLoaded) {
+      let lang = e.target.value;
+      // Monaco uses 'cpp' as 'cpp', 'python' as 'python', etc.
+      monaco.editor.setModelLanguage(editor.getModel(), lang);
+    }
+  });
+
+  // On submit, copy Monaco code into textarea if code snippet
+  document.getElementById("snippetForm").addEventListener("submit", function(e) {
+    if (snippetType.value === "code" && editor) {
+      descriptionTextarea.value = editor.getValue();
+    }
+  });
+</script>
+{% endblock hero %}

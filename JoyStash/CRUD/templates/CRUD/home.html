@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block nav_links %}
+ <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+          
+
+        </div>
+      </div>
+
+{% endblock nav_links %}
+
+{% block nav_links_mobile %}
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm block">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+    </div>
+  </div>
+{% endblock nav_links_mobile %}
+
+{% block hero %}
+
+<!-- Search and Order By (Responsive Flex) -->
+<div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3 sm:gap-4 px-6">
+    <!-- Search Bar -->
+    <input
+        type="text"
+        id="snippetSearch"
+        placeholder="Search snippets..."
+        class="w-full sm:w-2/3 p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 transition"
+    />
+    <!-- Order By Dropdown -->
+    <select
+        id="orderBy"
+        class="w-full sm:w-1/3 p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-blue-500 transition"
+    >
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="favorites">Favorites First</option>
+    </select>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6" id="snippetsGrid">
+    {% for snippet in snippets %}
+    <div class="bg-gray-900 text-white rounded-xl shadow-md p-5 transition transform hover:-translate-y-1 hover:shadow-xl hover:border hover:border-sky-400 cursor-pointer" data-favorite="{{ snippet.is_favorite }}" data-created="{{ snippet.created_at|date:'U' }}">
+        <a href="{% url 'snippet_detail' snippet.id %}" class="block text-inherit no-underline">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-lg font-bold">{{ snippet.title }}</h2>
+                <div class="flex items-center space-x-2">
+                    <!-- Copy button -->
+                    <button type="button" onclick="event.stopPropagation(); copyToClipboard(this, `{{ snippet.content|escapejs }}`)" class="text-gray-400 hover:text-yellow-400 transition-transform duration-150">
+                        📋
+                    </button>
+                    <!-- Favorite button -->
+                    <form method="post" action="{% url 'toggle_favorite' snippet.id %}" onClick="event.stopPropagation();">
+                        {% csrf_token %}
+                        <button type="submit">
+                            {% if snippet.is_favorite %}
+                                <span class="text-red-500">❤️</span>
+                            {% else %}
+                                <span class="text-gray-500 hover:text-red-400">♡</span>
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="text-gray-300 mb-3 line-clamp-2">{{ snippet.content }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-400">
+                <span class="italic">#{{ snippet.tags }}</span>
+                <span>{{ snippet.created_at|date:"M d, Y" }}</span>
+            </div>
+        </a>
+        <div class="mt-4 flex justify-end space-x-3">
+            <a href="{% url 'snippet_update' snippet.id %}" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-md hover:bg-gray-700 hover:text-white transition text-sm font-medium" data-snippet-id="{{ snippet.id }}" onClick="event.stopPropagation();">Update</a>
+            <a href="{% url 'snippet_delete' snippet.id %}" class="px-3 py-1 bg-gray-800 text-gray-300 rounded-md hover:bg-red-700 hover:text-white transition text-sm font-medium" onClick="event.stopPropagation();">Delete</a>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No snippets available.</p>
+    {% endfor %}
+</div>
+
+<!-- Floating Add Snippet Button -->
+<div class="fixed bottom-6 left-1/2 transform -translate-x-1/2">
+    <a href="{% url 'snippet_create' %}" class="bg-yellow-500 hover:bg-yellow-600 text-black text-3xl font-bold w-14 h-14 flex items-center justify-center rounded-full shadow-lg shadow-yellow-400/50 transition">
+        +
+    </a>
+</div>
+
+<script>
+    const favToggle = document.getElementById('favToggle');
+    const searchInput = document.getElementById('snippetSearch');
+    const snippetCards = document.querySelectorAll('.grid > div');
+    const orderBySelect = document.getElementById('orderBy');
+    const snippetsGrid = document.getElementById('snippetsGrid');
+
+    function filterSnippets() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const showFavOnly = favToggle.checked;
+
+        snippetCards.forEach(card => {
+            const title = card.querySelector('h2').innerText.toLowerCase();
+            const content = card.querySelector('p').innerText.toLowerCase();
+            const tags = card.querySelector('span.italic')?.innerText.toLowerCase() || '';
+            const isFav = card.dataset.favorite === "True" || card.dataset.favorite === "true";
+
+            const matchesSearch = title.includes(searchTerm) || content.includes(searchTerm) || tags.includes(searchTerm);
+            const matchesFav = showFavOnly ? isFav : true;
+
+            card.style.display = (matchesSearch && matchesFav) ? 'block' : 'none';
+        });
+    }
+
+    function reorderSnippets() {
+        const orderBy = orderBySelect.value;
+        const cardsArray = Array.from(snippetsGrid.children);
+
+        cardsArray.sort((a, b) => {
+            const aFav = a.dataset.favorite === "True" || a.dataset.favorite === "true";
+            const bFav = b.dataset.favorite === "True" || b.dataset.favorite === "true";
+            const aCreated = parseInt(a.dataset.created);
+            const bCreated = parseInt(b.dataset.created);
+
+            if (orderBy === 'newest') {
+                return bCreated - aCreated;
+            } else if (orderBy === 'oldest') {
+                return aCreated - bCreated;
+            } else if (orderBy === 'favorites') {
+                if (aFav === bFav) {
+                    return bCreated - aCreated; // keep newest first within favorites/non-favorites
+                }
+                return aFav ? -1 : 1;
+            }
+            return 0;
+        });
+
+        cardsArray.forEach(card => snippetsGrid.appendChild(card));
+    }
+
+    searchInput.addEventListener('input', () => {
+        filterSnippets();
+        reorderSnippets();
+    });
+    orderBySelect.addEventListener('change', () => {
+        reorderSnippets();
+    });
+
+    function copyToClipboard(button, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            button.classList.add('scale-125', 'text-yellow-400');
+            setTimeout(() => {
+                button.classList.remove('scale-125', 'text-yellow-400');
+            }, 300);
+        });
+    }
+
+    // Initial sort on page load
+    reorderSnippets();
+</script>
+
+{% endblock hero %}

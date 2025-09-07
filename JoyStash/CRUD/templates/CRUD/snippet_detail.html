@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block bg_color %}
+<body class="bg-gradient-to-b from-black via-[#0a0f3c] to-[#0f172a] min-h-screen overflow-hidden">
+
+{% endblock bg_color %}
+{% load static %}
+
+
+{% block nav_links %}
+ <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+          
+
+        </div>
+      </div>
+
+{% endblock nav_links %}
+
+{% block nav_links_mobile %}
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a href="{% url "dashboard" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+          {% if user.is_authenticated %}
+          <span class="text-gray-300 px-3 py-2 text-sm block">Hi, {{ user.username }}</span>
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+    </div>
+  </div>
+{% endblock nav_links_mobile %}
+
+
+{% block hero %}
+<style>
+    body {
+        background: #0a0f1c;
+        color: #F3F6F9;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+    .snippet-detail-container {
+        max-width: 1000px;
+        margin: 32px auto;
+        background: #0f172a;
+        border-radius: 18px;
+        padding: 36px 32px 28px 32px;
+        box-shadow: 0 6px 32px 0 rgba(0,0,0,0.24);
+    }
+    .snippet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+    }
+    .snippet-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #FFD166;
+        margin-bottom: 4px;
+        word-break: break-word;
+    }
+    .snippet-type {
+        font-size: 1rem;
+        color: #6C7A89;
+        background: #0a1229;
+        padding: 4px 14px;
+        border-radius: 14px;
+        margin-left: 8px;
+        font-weight: 500;
+        text-transform: capitalize;
+    }
+    .snippet-actions {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .snippet-action-btn {
+        background: #0f172a;
+        border: 1px solid #1e2a56;
+        color: #FFD166;
+        border-radius: 12px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, border 0.15s;
+        text-decoration: none;
+        outline: none;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .snippet-action-btn:hover {
+        background: #1e2a56;
+        color: #FAFAFA;
+        border: 1px solid #3b82f6;
+    }
+    .favorite-heart {
+        font-size: 2rem;
+        color: {% if snippet.is_favorite %}#3b82f6{% else %}#6C7A89{% endif %};
+        cursor: pointer;
+        transition: color 0.2s;
+        vertical-align: middle;
+        user-select: none;
+    }
+    .snippet-tags {
+        margin: 18px 0 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .snippet-tag {
+        background: #0a1229;
+        color: #3b82f6;
+        border-radius: 10px;
+        padding: 3px 12px 4px 12px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+    }
+    .snippet-dates {
+        font-size: 0.98rem;
+        color: #AAB3C2;
+        margin-bottom: 18px;
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+    .snippet-content-label {
+        margin-top: 22px;
+        margin-bottom: 10px;
+        font-size: 1.09rem;
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    .snippet-content {
+        position: relative;
+        max-height: 320px;
+        background: #0a0f1c;
+        border-radius: 12px;
+        padding: 0;
+        overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
+        /* Prevent body scroll for large notes */
+    }
+    #monaco-editor {
+        width: 100% !important;
+        height: 320px !important;
+        box-sizing: border-box;
+        background-color: #0a0f1c !important;
+    }
+    #note-content {
+        padding: 18px 22px;
+        font-size: 1.1rem;
+        color: #F3F6F9;
+        white-space: pre-line;
+        width: 100%;
+        box-sizing: border-box;
+        max-height: 320px;
+        overflow-y: auto;
+    }
+    .copy-button {
+        background: #0f172a;
+        border: 1px solid #1e2a56;
+        color: #3b82f6;
+        border-radius: 12px;
+        padding: 6px 14px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, transform 0.15s, border 0.15s;
+        font-weight: 500;
+        user-select: none;
+        margin-bottom: 12px;
+        margin-top: 5px;
+        display: inline-block;
+    }
+    .copy-button:hover {
+        background: #1e2a56;
+        color: #FAFAFA;
+        border: 1px solid #3b82f6;
+    }
+    .copy-button.copied {
+        color: #4ADE80;
+        transform: scale(1);
+        border-color: #4ADE80;
+    }
+    @media (max-width: 900px) {
+        .snippet-detail-container {
+            max-width: 98vw;
+            padding: 20px 8px 16px 8px;
+        }
+        .snippet-title {
+            font-size: 1.35rem;
+        }
+    }
+    @media (max-width: 600px) {
+        .snippet-detail-container {
+            padding: 16px 12px 16px 12px;
+        }
+        .snippet-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .snippet-actions {
+            gap: 8px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+        .snippet-title {
+            font-size: 1.3rem;
+            margin-bottom: 2px;
+        }
+        .snippet-type {
+            font-size: 0.9rem;
+            padding: 3px 10px;
+            margin-left: 0;
+            margin-top: 2px;
+        }
+        #note-content {
+            font-size: 1rem;
+            padding: 14px 16px;
+            height: calc(100vh - 220px);
+            max-height: none;
+        }
+        #monaco-editor {
+            height: calc(100vh - 220px) !important;
+            width: 100% !important;
+        }
+        .copy-button {
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            padding: 8px 0;
+            border-radius: 10px;
+        }
+        .snippet-tags {
+            margin: 12px 0 8px 0;
+            gap: 6px;
+        }
+        .snippet-tag {
+            font-size: 0.85rem;
+            padding: 2px 10px 3px 10px;
+        }
+        .snippet-dates {
+            font-size: 0.85rem;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+    }
+    @media (max-width: 400px) {
+        .snippet-detail-container {
+            padding: 12px 10px 12px 10px;
+        }
+        .snippet-title {
+            font-size: 1.15rem;
+        }
+        .snippet-type {
+            font-size: 0.85rem;
+            padding: 2px 8px;
+        }
+        .snippet-action-btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+        .favorite-heart {
+            font-size: 1.6rem;
+        }
+        #note-content {
+            font-size: 0.9rem;
+            padding: 12px 14px;
+            height: calc(100vh - 200px);
+            max-height: none;
+        }
+        #monaco-editor {
+            height: calc(100vh - 200px) !important;
+            width: 100% !important;
+        }
+        .snippet-dates {
+            font-size: 0.75rem;
+            gap: 10px;
+        }
+        .snippet-tag {
+            font-size: 0.75rem;
+            padding: 2px 8px 3px 8px;
+        }
+        .copy-button {
+            font-size: 0.85rem;
+            padding: 7px 0;
+        }
+    }
+</style>
+
+<div class="snippet-detail-container">
+    <div class="snippet-header">
+        <div>
+            <span class="snippet-title">{{ snippet.title }}</span>
+            <span class="snippet-type">{{ snippet.snippet_type }}</span>
+        </div>
+<div class="snippet-actions">
+    <a href="{% url 'home' %}" class="snippet-action-btn">← Home</a>
+    <a href="{% url 'snippet_update' snippet.id %}" class="snippet-action-btn">Edit</a>
+    <a href="{% url 'snippet_delete' snippet.id %}" class="snippet-action-btn" style="color:#F45B69;border-color:#F45B69;">Delete</a>
+    <span class="favorite-heart" title="Favorite">
+        {% if snippet.is_favorite %}
+            &#x2764;
+        {% endif %}
+    </span>
+</div>
+    </div>
+    {% if snippet.tags.all %}
+    <div class="snippet-tags">
+        {% for tag in snippet.tags.all %}
+            <span class="snippet-tag">{{ tag.name }}</span>
+        {% empty %}
+            <span class="snippet-tag" style="color:#6C7A89;">No tags</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="snippet-dates">
+        <span>Created: {{ snippet.updated_at|date:"M d, Y" }}</span>
+    </div>
+    <div class="snippet-content-label">
+        {% if snippet.snippet_type == "code" %}
+            Code
+        {% else %}
+            Content
+        {% endif %}
+    </div>
+    <div class="snippet-content">
+        {% if snippet.snippet_type == "code" %}
+            <div id="monaco-editor" style="width:100%;height:320px;"></div>
+            {% comment %} <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script> {% endcomment %}
+
+            <script src="{% static 'monaco/vs/loader.js' %}"></script>
+
+            <script>
+                let editor;
+                {% comment %} require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' }}); {% endcomment %}
+                                require.config({ paths: { 'vs': '{% static "monaco/vs" %}' }});
+                require(['vs/editor/editor.main'], function() {
+                    editor = monaco.editor.create(document.getElementById('monaco-editor'), {
+                        value: "{{ snippet.content|escapejs }}",
+                        language: '{{ snippet.language|default:"plaintext" }}',
+                        theme: 'vs-dark',
+                        readOnly: true,
+                        fontSize: 15,
+                        minimap: { enabled: false },
+                        automaticLayout: true,
+                        scrollBeyondLastLine: false,
+                        wordWrap: 'on'
+                    });
+                });
+
+                function showCopyFeedback(button) {
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                    }, 1200);
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const copyBtn = document.getElementById('copy-button');
+                    copyBtn.addEventListener('click', async function() {
+                        const btn = this;
+                        if(editor){
+                            const content = editor.getValue();
+                            try {
+                                await navigator.clipboard.writeText(content);
+                                showCopyFeedback(btn);
+                            } catch (err) {
+                                console.error('Failed to copy: ', err);
+                            }
+                        }
+                    });
+                });
+            </script>
+        {% else %}
+            <div id="note-content" style="padding: 18px 22px; font-size:1.1rem; color:#F3F6F9; white-space: pre-line;">
+                {{ snippet.content|linebreaksbr }}
+            </div>
+            <script>
+                function showCopyFeedback(button) {
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                    }, 1200);
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const copyBtn = document.getElementById('copy-button');
+                    copyBtn.addEventListener('click', async function() {
+                        const btn = this;
+                        const contentDiv = document.getElementById('note-content');
+                        let textToCopy = contentDiv.innerText || contentDiv.textContent;
+                        try {
+                            await navigator.clipboard.writeText(textToCopy);
+                            showCopyFeedback(btn);
+                        } catch (err) {
+                            console.error('Failed to copy: ', err);
+                        }
+                    });
+                });
+            </script>
+        {% endif %}
+    </div>
+    <button class="copy-button" id="copy-button" title="Copy content">Copy</button>
+</div>
+{% endblock hero %}

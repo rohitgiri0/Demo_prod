@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+
+{% block nav_links %}
+ <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="{% url "home" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+          {% if user.is_authenticated %}
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+        </div>
+    </div>
+{% endblock nav_links %}
+
+
+{% block nav_links_mobile %}
+
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a href="{% url "home" %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+          {% if user.is_authenticated %}
+          <a href="{% url "logoutpage" %}" class="text-red-400 hover:bg-red-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+          
+          {% else %}
+          <a href="{% url "loginpage" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+          <a href="{% url "register" %}" class="text-blue-400 hover:bg-blue-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
+
+          {% endif %}
+    </div>
+  </div>
+{% endblock nav_links_mobile %}
+
+{% block hero %}
+
+    <h1 class="text-3xl font-bold text-white p-6">
+       Welcome back, {{ user.username }} — let's code magic!
+    </h1>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <div class="bg-sky-600 p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 hover:bg-sky-200 transition-transform transition-shadow duration-300">
+        <h2 class="text-xl font-semibold mb-2 text-gray-800">Total Snippets</h2>
+        <p class="text-3xl font-bold text-gray-800">{{ total_snippets|default:"0" }}</p>
+      </div>
+    </div>
+
+    <!-- Recent Snippets -->
+    <div class="bg-sky-500 rounded-lg p-6 shadow-md m-6 overflow-auto">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800">Recent Snippets</h2>
+      {% if recent_snippets %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-left min-w-max border-collapse">
+          <thead>
+            <tr class="border-b border-sky-200">
+              <th class="p-3 text-gray-800 font-semibold bg-sky-100">Title</th>
+              <th class="p-3 text-gray-800 font-semibold bg-sky-100">Type</th>
+              <th class="p-3 text-gray-800 font-semibold bg-sky-100">Favorite</th>
+              <th class="p-3 text-gray-800 font-semibold bg-sky-100">Tags</th>
+              <th class="p-3 text-gray-800 font-semibold bg-sky-100">Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for snippet in recent_snippets %}
+            <tr onclick="window.location='{% url 'snippet_detail' snippet.id %}'"
+                class="hover:shadow-lg hover:bg-sky-200 transition-shadow transition-colors duration-300 cursor-pointer">
+              <td class="p-3 text-gray-800">{{ snippet.title }}</td>
+              <td class="p-3 text-gray-800 capitalize">{{ snippet.snippet_type|default:"-" }}</td>
+              <td class="p-3 text-center">
+                {% if snippet.is_favorite %}
+                  <span title="Favorite" class="text-red-500">&#10084;</span>
+                {% else %}
+                  <span title="Not favorite" class="text-blue-400">&#9825;</span>
+                {% endif %}
+              </td>
+              <td class="p-3 text-gray-800">
+                {% if snippet.tags %}
+                  {{ snippet.tags }}
+                {% else %}
+                  <span class="text-gray-400">-</span>
+                {% endif %}
+              </td>
+              <td class="p-3 text-gray-800">{{ snippet.updated_at|date:"d M Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-center text-blue-900 text-lg">No snippets yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- JS for Sidebar & Dropdown -->
+  <script>
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const profileBtn = document.getElementById('profile-btn');
+    const profileMenu = document.getElementById('profile-menu');
+    const mainContent = document.getElementById('main-content');
+
+    // Sidebar toggle
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+      // On mobile, add ml-64 to main content when sidebar is open to prevent overlap
+      if (window.innerWidth < 640) {
+        if (!sidebar.classList.contains('-translate-x-full')) {
+          mainContent.classList.add('ml-64');
+        } else {
+          mainContent.classList.remove('ml-64');
+        }
+      }
+    });
+
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+      if (window.innerWidth < 640) {
+        mainContent.classList.remove('ml-64');
+      }
+    });
+
+    // Profile dropdown toggle
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown if clicked outside
+    window.addEventListener('click', (e) => {
+      if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+        profileMenu.classList.add('hidden');
+      }
+    });
+
+    // Responsive: Remove ml-64 if resizing to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 640) {
+        mainContent.classList.remove('ml-64');
+      }
+    });
+  </script>
+
+
+{% endblock hero %}

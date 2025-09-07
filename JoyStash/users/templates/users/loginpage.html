@@ -1,0 +1,54 @@
+{% extends "auth_base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% block title %}Login{% endblock title %}
+{% block style %}
+<link rel="stylesheet" href="{% static "users/css/login.css" %}">
+{% endblock style %}
+{% block content %}
+<div class="wrapper">
+        <form action="{% url "loginpage" %}" method="POST">
+            {% csrf_token %}
+            <h1>Login</h1>
+            <div class="input_box">
+                <input type="text" placeholder="Username" required name='uname'>
+                <i class='bx  bx-user'  ></i> 
+            </div>
+            <div class="input_box">
+                <input type="password" placeholder="Password" required name='pass'>
+                <i class='bx  bx-lock'  ></i> 
+            </div>
+
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+        <button class="btn" type="submit">Login</button>
+        
+<button id="b" 
+        type="button" 
+        class="login-with-google-btn" 
+        onclick="window.location.href='{% provider_login_url 'google' %}'">
+    <b>Sign in with Google</b>
+</button>
+
+
+        <div class="register_link">
+            <p>Don't have an account? <a href="{% url "register" %}">Register</a></p>
+        </div>
+        </form>
+        
+          <div class="back">
+                <a href="{% url 'home' %}" class="back-btn">⬅ Back</a>
+        </div>
+
+    </div>
+{% endblock content %}
+

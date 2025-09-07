@@ -1,0 +1,60 @@
+{% extends "auth_base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+
+{% block title %}
+Register
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{%static 'users/css/login.css'%}">
+{% endblock style %}
+
+{% block content %}
+<div class="wrapper">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h1>Register</h1>
+            <div class="input_box">
+                <input type="text" placeholder="Username" required name='uname'>
+                <i class='bx  bx-user'  ></i> 
+            </div>
+            <div class="input_box">
+                <input type="text" placeholder="Email" required name='email'>
+                <i class='bx  bx-user'  ></i> 
+            </div>
+            <div class="input_box">
+                <input type="password" placeholder="Password" required name='pass'>
+                <i class='bx  bx-lock'  ></i> 
+            </div>
+            <div class="input_box">
+                <input type="password" placeholder="Confirm Password" required name='c_pass'>
+                <i class='bx  bx-lock'  ></i> 
+            </div>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+        <button class="btn" type="submit">Register</button>
+        <button id="b" 
+        type="button" 
+        class="login-with-google-btn" 
+        onclick="window.location.href='{% provider_login_url 'google' %}'">
+    <b>Sign in with Google</b>
+</button>
+        <div class="register_link">
+            <p>Already have an account? <a href="{% url "loginpage" %}">Login</a></p>
+        </div>
+        </form>
+        <div class="back">
+<a href="{% url "home" %}">⬅ Back</a>
+        </div>
+    </div>
+{% endblock content %}
