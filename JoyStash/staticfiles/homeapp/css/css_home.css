@@ -1,0 +1,418 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.main-heading {
+    display: flex;             /* enables flexbox centering */
+  justify-content: space-evenly;  
+  align-items: center;      
+  margin-top: 20vh;
+  height: 80vh;             /* full screen height */
+  text-align: center;        /* center text inside */
+  padding: 0 20px;           
+  box-sizing: border-box;
+  flex-direction: column;
+}
+.main-heading h1{
+  font-weight: 700;          
+  font-size: 4rem; 
+  margin: 0;
+  color: #fff;
+  line-height: 10vh;
+}
+
+.animated-gradient{
+      font-size: 4rem;
+
+  font-weight: bold;
+  background: linear-gradient(270deg, #3b82f6, #8b5cf6, #facc15);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientMove 5s ease infinite;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.sub-heading{
+    color: darkcyan;
+    font-size: 1.4rem;
+    margin-top:3vh;
+}
+
+.start{
+    margin: 1.5rem 0.5rem;
+    display: flex;
+
+    flex-direction: column;
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    color: #000;
+    border-radius: 12px; /* pill shape */
+    font-weight: 300;
+    background: #3dbaf4;
+    transition: all 0.3s ease, box-shadow 0.3s ease;
+}
+
+.start:hover{
+    transform: scale(1.1); 
+    background: #000;
+    color: #fff;
+}
+
+@media (max-width: 480px) {
+  .main-heading h1{
+    font-size: 3.5rem;
+    line-height: 6.5vh;
+    padding-left: auto;
+  }
+}
+
+
+/* Hero Section */
+#hero { 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  text-align: center;
+  padding: 5rem 2rem;
+  color: #fff;
+}
+
+/* Heading */
+#hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Gradient word */
+#hero .gradient-text {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+#hero .subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.6;
+}
+
+/* Features grid */
+#hero .features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Feature cards */
+#hero .feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#hero .feature-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  border: 1px solid rgb(0, 170, 255);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+
+}
+
+/* Icons */
+#hero .icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Feature titles */
+#hero .feature-card h3 {
+  margin: 0.5rem 0 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Feature descriptions */
+#hero .feature-card p {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+/* Sub Hero Section */
+#sub-hero {
+   /* black to dark blue */
+  text-align: center;
+  padding: 5rem 2rem;
+  color: #fff;
+}
+
+/* Heading */
+#sub-hero h2 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Gradient word */
+#sub-hero .gradient-text {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+#sub-hero .subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+/* Steps container */
+#sub-hero .steps {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+/* Step item */
+#sub-hero .step {
+  flex: 1 1 280px;
+  max-width: 320px;
+  text-align: center;
+  position: relative;
+}
+
+/* Step icon wrapper */
+#sub-hero .step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+/* Step number circle */
+#sub-hero .step-number {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4383ea, #007589);
+  color: #fff;
+  font-weight: 700;
+  line-height: 40px;
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.8); /* glowing effect */
+}
+
+/* Step icon square */
+#sub-hero .icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #06c5ff;
+}
+.icon:hover{
+    transform: scale(1.1);
+}
+
+/* Step headings */
+#sub-hero .step h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+/* Step descriptions */
+#sub-hero .step p {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #sub-hero .steps {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  #sub-hero .steps::before {
+    content: none; /* remove connecting line on mobile */
+  }
+}
+
+@media (max-width: 768px) {
+  #sub-hero .steps {
+    flex-direction: column;
+    gap: .5rem;
+
+    align-items: center;   /* ✅ centers the step blocks */
+  }
+
+  #sub-hero .step {
+    max-width: 100%;       /* ✅ use full width */
+    text-align: center;    /* ✅ ensures content is centered */
+  }
+
+  #sub-hero .steps::before {
+    content: none; /* remove connecting line on mobile */
+  }
+}
+
+/* CTA Section */
+#cta {
+  background: linear-gradient(to bottom right, #000000, #0f172a, #111827);
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  color: #fff;
+}
+
+/* Heading */
+#cta h2 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Gradient word */
+#cta .gradient-text {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+#cta .subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+/* CTA Button */
+#cta .cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0ea5e9;
+  color: #fff;
+  padding: 0.9rem 2rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1rem;
+}
+
+#cta .cta-button:hover {
+  transform: scale(1.05);
+  color: white;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.7);
+}
+
+#cta .cta-button .arrow {
+  font-size: 1.2rem;
+}
+
+/* Note below button */
+#cta .note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Footer */
+#footer {
+  background: #111827;
+  padding: 2rem 2rem 1.5rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* Footer top */
+#footer .footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+#footer .footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+#footer .footer-links a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+#footer .footer-links a:hover {
+  color: #3b82f6;
+}
+
+/* Footer bottom */
+#footer .footer-bottom {
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+#footer .footer-bottom p {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9ca3af;
+}
+
+/* Colored dots */
+#footer .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+#footer .dot.blue {
+  background: #3b82f6;
+}
+
+#footer .dot.purple {
+  background: #8b5cf6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #footer .footer-top {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
