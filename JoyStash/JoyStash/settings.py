@@ -70,8 +70,10 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware'
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
 ]
+
 
 ROOT_URLCONF = 'JoyStash.urls'
 
@@ -151,3 +153,4 @@ SOCIALACCOUNT_LOGIN_ON_GET=True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = "home"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
